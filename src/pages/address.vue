@@ -6,7 +6,7 @@
 
 <script>
     export default {
-        name: 'address',
+        name: 'addr',
         props: {}
     }
 </script>
