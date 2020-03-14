@@ -5,7 +5,8 @@ Vue.config.productionTip = false;
 import axios from 'axios';
 import VueAxios from "vue-axios";
 import Router from "./router";
-
+import './assets/css/base.css';
+import "./assets/css/index.css";
 Vue.use(VueAxios, axios);
 
 new Vue({
