@@ -45,38 +45,38 @@
                             </ul>
                         </div>
                         <ul class="cart-item-list">
-                            <li>
+                            <li v-for="item in cartList" v-bind:key="item.productId">
                                 <div class="cart-tab-1">
                                     <div class="cart-item-check">
-                                        <a href="javascipt:;" class="checkbox-btn item-check-btn checked">
+                                        <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'checked':item.checked}" v-on:click="editCart('checked',item)">
                                             <svg class="icon icon-ok">
                                                 <use xlink:href="#icon-ok"></use>
                                             </svg>
                                         </a>
                                     </div>
                                     <div class="cart-item-pic">
-                                        <img src="/imgs/1.jpg">
+                                        <img v-bind:src="'/imgs/'+item.productImage">
                                     </div>
                                     <div class="cart-item-title">
-                                        <div class="item-name">小度人工智能音箱</div>
+                                        <div class="item-name">{{item.productName}}</div>
                                     </div>
                                 </div>
                                 <div class="cart-tab-2">
-                                    <div class="item-price">89</div>
+                                    <div class="item-price">{{item.productPrice}}</div>
                                 </div>
                                 <div class="cart-tab-3">
                                     <div class="item-quantity">
                                         <div class="select-self select-self-open">
                                             <div class="select-self-area">
-                                                <a class="input-sub">-</a>
-                                                <span class="select-ipt">1</span>
-                                                <a class="input-add">+</a>
+                                                <a class="input-sub" v-on:click="editCart('minus',item)">-</a>
+                                                <span class="select-ipt">{{item.productNum}}</span>
+                                                <a class="input-add" v-on:click="editCart('add',item)">+</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="cart-tab-4">
-                                    <div class="item-price-total">￥89.00元</div>
+                                    <div class="item-price-total">{{(item.productPrice*item.productNum) | currency}}</div>
                                 </div>
                                 <div class="cart-tab-5">
                                     <div class="cart-item-opration">
@@ -125,17 +125,50 @@
     import NavHeader from './../components/Header.vue';
     import NavFooter from './../components/Footer.vue';
     import Modal from './../components/Modal.vue';
+
+
     export default {
         name: 'cart',
-        data(){
+        data() {
             return {
-
+                cartList: []
             }
         },
-        components:{
+        components: {
             NavHeader,
             NavFooter,
             Modal
+        },
+        mounted() {
+            this.init();//初始化购物车列表
+        },
+        filters:{
+          currency(value){
+              if(!value) return 0.00;
+              return '¥' + value.toFixed(2) + '元';
+          }
+        },
+        methods: {
+            //初始化购物车
+            init() {
+                this.axios.get("http://localhost:8081/a")
+                    .then((response) => {
+                        console.log(response);
+                        let res = response.data;
+                        console.log(res);
+                        this.cartList = res.data;
+                    })
+            },
+            //修改购物车数量
+            editCart(type, item) {
+                if (type === 'add') {
+                    item.productNum++;
+                }else if(type === 'minus'){
+                    item.productNum--;
+                }else{
+                    item.checked = !item.checked
+                }
+            }
         }
     }
 </script>
